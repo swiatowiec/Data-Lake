@@ -5,12 +5,12 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
 
-
+#AWS connection
 config = configparser.ConfigParser()
 config.read('dl.cfg')
 
-os.environ['AWS_ACCESS_KEY_ID']=config['AWS_ACCESS_KEY_ID']
-os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS_SECRET_ACCESS_KEY']
+os.environ['AWS_ACCESS_KEY_ID']=config['AWS CREDS']['AWS_ACCESS_KEY_ID']
+os.environ['AWS_SECRET_ACCESS_KEY']=config['AWS CREDS']['AWS_SECRET_ACCESS_KEY']
 
 
 def create_spark_session():
@@ -47,7 +47,7 @@ def process_song_data(spark, input_data, output_data):
 
     # extract columns to create songs table
     songs_f = ["title", "artist_id", "year", "duration"]
-    songs_table = df.select(song_fields).dropDuplicates().withColumn("song_id", monotonically_increasing_id())
+    songs_table = df.select(song_f).dropDuplicates().withColumn("song_id", monotonically_increasing_id())
     
     # write songs table to parquet files partitioned by year and artist
     songs_table.write.mode("overwrite").partitionBy("year", "artist_id").parquet(output_data + "songs")
@@ -55,7 +55,7 @@ def process_song_data(spark, input_data, output_data):
 
     # extract columns to create artists table
     artists_f = ["artist_id", "artist_name as name", "artist_location as location", "artist_latitude as latitude", "artist_longitude as longitude"]
-    artists_table = df.selectExpr(artists_fields).dropDuplicates()
+    artists_table = df.selectExpr(artists_f).dropDuplicates()
     
     # write artists table to parquet files
     artists_table.write.mode("overwrite").parquet(output_data + 'artists')
@@ -140,7 +140,7 @@ def main():
     
     spark = create_spark_session()
     input_data = "s3a://udacity-dend/"
-    output_data = ""
+    output_data = "s3a://udacitydl/"
     
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
