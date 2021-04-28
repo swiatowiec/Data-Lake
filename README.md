@@ -13,6 +13,9 @@ The goal is to built an ETL pipeline that extracts their data from data lake hos
 - etl.py reads data from S3, processes that data using Spark, and writes them back to S3
 - README.md current file
 
+## Star schema
+![SCHEMA](SCHEMA.PNG)
+
 ## How to run process
 1. Fill in and load credentials
 2. Create an S3 Bucket 
